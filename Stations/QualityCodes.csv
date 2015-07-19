@@ -1,0 +1,32 @@
+#QUALITY,PRINTQUAL,,TEXT,ACTIVE,CATEGORY1,,CATEGORY2,,DBVER14,DATECREATE,TIMECREATE,USERCREATE,DATEMOD,TIMEMOD,USERMOD
+1,,Good Quality Data - no quality flag printed,Good,T,,(unknown),,(unknown),F,,0,,6/10/2006,1238,STACEP01
+25,D,D...Daily Read,Operational Data,T,,(unknown),,(unknown),F,,0,,20/08/2009,1351,HANSEP02
+30,F,F ...  Fair Quality,Fair,T,,(unknown),,(unknown),F,,0,,2/10/2007,1556,STACEP01
+31,F,F ...  Fair Quality,Fair - Estimated,T,,(unknown),,(unknown),F,,0,,23/07/2009,1347,HANSEP02
+36,F,F ...  Fair Quality,Fair - Extrapolated Rating,F,,(unknown),,(unknown),F,,0,,2/09/2009,1057,HANSEP02
+37,F,F ...  Fair Quality,Fair - Theoretical Rating,F,,(unknown),,(unknown),F,,0,,2/09/2009,1057,HANSEP02
+40,F,F ...  Fair Quality,Fair - Extrapolated Rating,T,,(unknown),,(unknown),F,,0,,2/09/2009,1056,HANSEP02
+41,F,F ...  Fair Quality,Fair - Theoretical Rating,T,,(unknown),,(unknown),F,,0,,2/09/2009,1056,HANSEP02
+54,F,F ...  Fair Quality,Fair - Smoothed Data,F,,(unknown),,(unknown),F,,0,,15/07/2009,1646,STACEP01
+80,A,A ...  Accumulated Data,Fair - Accumulated Data,F,,(unknown),,(unknown),F,,0,,15/07/2009,1649,STACEP01
+81,A,A ...  Accumulated Data,Fair - Accumulated Total,F,,(unknown),,(unknown),F,,0,,15/07/2009,1649,STACEP01
+82,S,S ...  Fair - Straight line interpolation,Fair - Straight Line Interpolation Between Points,F,,(unknown),,(unknown),F,,0,,22/07/2009,1132,STACEP01
+84,R,R ...  Fair - Rainfall less than 0.2mm,Fair - Rainfall Less Than 0.2mm,F,,(unknown),,(unknown),F,,0,,22/07/2009,1132,STACEP01
+85,E,E ...  Estimated Data,Fair - Redistributed Accumulated Daily Data,F,,(unknown),,(unknown),F,,0,,15/07/2009,1652,STACEP01
+90,P,P ...  Poor Quality,Poor,T,,(unknown),,(unknown),F,,0,,2/10/2007,1602,STACEP01
+91,P,P ...  Poor Quality,Poor - Estimated,T,,(unknown),,(unknown),F,,0,,2/10/2007,1602,STACEP01
+100,P,P ...  Poor Quality,Poor - Extrapolated Rating,T,,(unknown),,(unknown),F,,0,,2/09/2009,1057,HANSEP02
+101,P,P ...  Poor Quality,Poor - Theoretical Rating,T,,(unknown),,(unknown),F,,0,,2/09/2009,1057,HANSEP02
+102,P,P ...  Poor Quality,Poor - Extrapolated Rating,F,,(unknown),,(unknown),F,,0,,2/09/2009,1057,HANSEP02
+108,P,P ...  Poor Quality,Poor - Theoretical Rating,F,,(unknown),,(unknown),F,,0,,2/09/2009,1057,HANSEP02
+127,D,D...Daily Read,Poor - Nil Daily Record within Accumulated Period,T,,(unknown),,(unknown),F,,0,,20/08/2009,1045,HANSEP02
+128,A,A ...  Accumulated Data,Poor - Accumulated Total for Preceeding Period of Daily Data.,T,,(unknown),,(unknown),F,,0,,20/08/2009,1045,HANSEP02
+129,*,* ...  Distributed Total,Poor - Distributed Total,T,,(unknown),,(unknown),F,,0,,20/02/2009,1325,STACEP01
+130,V,V ...  WL Below Recordable Range,Water Level Below Recordable Range,T,,(unknown),,(unknown),F,,0,,23/02/2010,1334,STACEP01
+132,?,? ...  Quality Unknown,Quality Unknown,T,,(unknown),,(unknown),F,,0,,2/10/2007,1603,STACEP01
+150,T,T ...  Unverified Telemetry Data,Unverified Telemetered Data,T,,(unknown),,(unknown),F,,0,,13/07/2009,1004,HANSEP02
+153,$,$ ...  Missing - Outside Recordable Range,Not Recorded - Outside Recordable Range,T,,(unknown),,(unknown),F,,0,,13/03/2008,1123,STACEP01
+154,X,X ...  Not Operating,Not Operating,T,,(unknown),,(unknown),F,,0,,20/07/2009,1550,STACEP01
+201,M,M ...  Missing,Missing,T,,(unknown),,(unknown),F,,0,,20/07/2009,1550,STACEP01
+202,#,# ...  Missing - Outside Rating Range,Missing - Outside Rating Range,T,,(unknown),,(unknown),F,,0,,2/10/2007,1606,STACEP01
+255,M,M ...  Missing,Missing,T,,(unknown),,(unknown),F,,0,,20/07/2009,1550,STACEP01

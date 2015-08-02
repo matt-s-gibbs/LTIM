@@ -27,7 +27,7 @@ MapQualityCodes<-function(data)
 
 
 AllData<-NULL
-
+StationNo<-1
 
 for(Flow in c(FALSE,TRUE))
 {
@@ -40,7 +40,7 @@ for(Flow in c(FALSE,TRUE))
     Folder<-"Flow"
   }else
   {
-    Stations<-read.csv("Stations/LevelStationsDummy.csv",stringsAsFactors = FALSE)
+    Stations<-read.csv("Stations/LevelStations.csv",stringsAsFactors = FALSE)
     Folder<-"Level"
   }
 
@@ -56,7 +56,7 @@ MDMSName<-Stations$MDMSName[s]
 A<-read.csv(paste0(Folder,"\\",Station,"_100.00_DAY_0900.csv"),skip=3,header=FALSE,stringsAsFactors=FALSE)
 A[,4]<-QualCodes[match(A[,3],QualCodes[,1]),4]
 WL<-zoo(A[,-1],as.Date(A[,1],"%H:%M:%S %d/%m/%Y"))
-WL<-window(WL,start="2014-07-01",end="2015-06-29")
+WL<-window(WL,start="2014-07-01",end="2015-06-30")
 colnames(WL)<-c("dailyStage (m)","dailyStagequalityCode","Comments")
 WL<-MapQualityCodes(WL)
 
@@ -73,7 +73,7 @@ if(Flow)
   A<-read.csv(paste0(Folder,"\\",Station,"_141.00_DAY_0900.csv"),skip=3,header=FALSE,stringsAsFactors=FALSE)
   A[,4]<-QualCodes[match(A[,3],QualCodes[,1]),4]
   Q<-zoo(A[,-1],as.Date(A[,1],"%H:%M:%S %d/%m/%Y"))
-  Q<-window(Q,start="2014-07-01",end="2015-06-29")
+  Q<-window(Q,start="2014-07-01",end="2015-06-30")
   colnames(Q)<-c("dailyVolume (ML/day)","qualityCode","Comments") 
   Q<-MapQualityCodes(Q)
   
@@ -98,7 +98,8 @@ if(Flow)
   Data<-data.frame(cbind(WL[,1],Q[,1:2],Comments))
 
 #add extra columns
-Data$sampleDate<-paste(format(index(Q),format="%d/%m/%Y"),"09:00:00")
+Data$sampleDate<-paste0(format(index(Q),format="%d/%m/%Y")," 09:00:",formatC(StationNo,width=2,flag="0")) #date and time needs to be unique.
+StationNo<-StationNo+1
 Data$Name<-MDMSName
 
  AllData<-rbind(AllData,Data)

@@ -3,7 +3,7 @@ library(hydroGOF)
 library(hydroTSM)
 library(ggplot2)
 
-for(Model in 1:3)
+for(Model in c(1,3))
 {
 
 if(Model==1)
@@ -14,16 +14,16 @@ if(Model==1)
 NameLevel<-c(   "DS Lock 3","Overland Corner", "US Lock 2", "DS Lock 2", "Morgan", "US Lock 1")
 FolderLevel<-c("Flow"    ,"Level"   ,"Level"   ,"Flow"    ,"Level"   ,"Level")
 HydstraLevel<-c("A4260517","A4260528","A4260518","A4260519","A4261110","A4260902")
-ChainageLevel<-c(157250,   143250,     88000,      87750,     41750,       0 )
+ChainageLevel<-c(157250,   143250,     88000,      87250,     41750,       0 )
 
 #Flow
 NameFlow<-c("DS Lock 2", "DS Lock 1", "DS Lock 3")
 HydstraFlow<-c("A4260519","A4260903","A4260517")
-ChainageFlow<-c(87750,0,157250)
+ChainageFlow<-c(87250,0,157250)
 
 #get results
-#file<-"Modelling/ModelOutputs/Lock13-TSOut.txt"
-file<-"E:/L3Trial/Observed/Lock13-TSOut.txt"
+file<-"Modelling/ModelOutputs/Lock13-TSOut.txt"
+#file<-"E:/L3Trial/Observed/Lock13-TSOut.txt"
 
 OutFolder<-"L3-L1"
 
@@ -69,9 +69,15 @@ if(Model==3)
   OutFolder<-"Pike"
 }
 
-Chainage<-read.table(file,sep="",skip=3,nrows=1,stringsAsFactors=FALSE)
-Variable<-read.table(file,sep="",skip=4,nrows=1,stringsAsFactors=FALSE)
-Results<-read.table(file,sep="",skip=8,nrows=length(readLines(file))-10,stringsAsFactors=FALSE)
+Chainage<-read.table(file,sep=",",skip=3,nrows=1,stringsAsFactors=FALSE)
+Chainage<-Chainage[-1]
+Variable<-read.table(file,sep=",",skip=4,nrows=1,stringsAsFactors=FALSE)
+Variable<-Variable[-1]
+Results<-read.table(file,sep=",",skip=8,nrows=length(readLines(file))-10,stringsAsFactors=FALSE)
+Dates<-substr(Results[,1],3,21)
+Dates<-as.Date(Dates)
+
+Results[,1]<-as.numeric(substr(Results[,1],22,42))
 
 Index<-1 #1 for level, 2 for flow
 
@@ -86,8 +92,7 @@ for(i in 1:length(HydstraLevel))
   X<-xts(A$Mean,as.POSIXct(strptime(A$Date,"%H:%M:%S %d/%m/%Y")))
   
   Col<-which(Chainage==chain)[Index]
-  Date<-as.POSIXct(paste(Results[,1],Results[,2]))
-  Y<-xts(Results[,Col+1],Date)
+  Y<-xts(Results[,Col],Dates)
   
   #read chainage
   #NA bad values
@@ -112,10 +117,8 @@ for(i in 1:length(HydstraFlow))
   X<-xts(A$Mean,as.POSIXct(strptime(A$Date,"%H:%M:%S %d/%m/%Y"),tz = "GMT"))
   
   Col<-which(Chainage==chain)[Index]
-  Date<-as.POSIXct(strptime(paste(Results[,1],Results[,2]),"%Y-%m-%d %H:%M:%S"),tz = "GMT")
-  Y<-xts(Results[,Col+1]*86.4,Date)
-  #Y[1:72]<-NA #remove intial instability
-  
+  Y<-xts(Results[,Col],Dates)*86.4
+
   #read chainage
   #NA bad values
   #zoo
@@ -123,12 +126,11 @@ for(i in 1:length(HydstraFlow))
   plot2(Y,X,plot.type="single",legend=c("Sim","Obs"),main=name)
   graphics.off()
   
-  
   Y<-apply.daily(Y,mean)
   Y<-to.daily(Y,drop.time=TRUE)[,1]
   X<-to.daily(X,drop.time=TRUE)[,1]
   
-  Diversions[[i]]<-apply.weekly(Y,function (x) mean(x,na.rm=TRUE))-apply.weekly(X,function (x) mean(x,na.rm=TRUE))
+  Diversions[[i]]<-apply.weekly(X,function (x) mean(x,na.rm=TRUE))-apply.weekly(Y,function (x) mean(x,na.rm=TRUE))
   
   write.csv(Diversions[[i]],file=paste0("Modelling/Plots/",OutFolder,"/",site,"Diversions.csv"))
   
@@ -137,25 +139,27 @@ for(i in 1:length(HydstraFlow))
 #format diversions file
 
 
-f<-paste0(OutFolder,"Diversions.txt")
+f<-"DiversionsFormatted.txt"
 cat("Discharge[Ml/day]:Instantaneous\n",file=paste0("Modelling/Plots/",OutFolder,"/",f))
 
 if(Model==1)
 {
 cat(paste("Time","Lock 2","Lock 1","Lock 3\n",sep="\t"),file=paste0("Modelling/Plots/",OutFolder,"/",f),append=TRUE)
-Data<-cbind(paste("09:00:00",index(Diversions[[1]])),round(as.numeric(Diversions[[1]],3),0),round(as.numeric(Diversions[[2]]),0),round(as.numeric(Diversions[[3]]),0))
+Data<-cbind(Diversions[[1]]-Diversions[[3]],Diversions[[2]]-Diversions[[1]]-Diversions[[3]],Diversions[[3]])
+Data[is.na(Data)]<-0
 }
 if(Model==2)
 {
   cat(paste("Time","Lock 4","Lock 3","\n",sep="\t"),file=paste0("Modelling/Plots/Kat/",f),append=TRUE)
-  Data<-cbind(paste("09:00:00",index(Diversions[[1]])),round(as.numeric(Diversions[[1]],3),0),round(as.numeric(Diversions[[2]]),0))
+  Data<-cbind(Diversions[[1]],Diversions[[2]]-Diversions[[1]])
 }
 if(Model==3)
 {
   cat(paste("Time","Lock 5","Lock 4","\n",sep="\t"),file=paste0("Modelling/Plots/Pike/",f),append=TRUE)
-  Data<-cbind(paste("09:00:00",index(Diversions[[1]])),round(as.numeric(Diversions[[1]],3),0),round(as.numeric(Diversions[[2]]),0))
+  Data<-cbind(Diversions[[1]],Diversions[[2]]-Diversions[[1]])
 }
-write.table(Data,sep="\t",file=paste0("Modelling/Plots/",OutFolder,"/",f),append=TRUE,quote=FALSE,row.names=FALSE,col.names=FALSE)
+Data[is.na(Data)]<-0
+write.table(Data,sep="\t",file=paste0("Modelling/Plots/",OutFolder,"/",f),append=TRUE,quote=FALSE,row.names=index(Data),col.names=FALSE)
 
 
 }

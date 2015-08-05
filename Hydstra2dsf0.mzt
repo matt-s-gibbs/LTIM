@@ -1,0 +1,39 @@
+// Created     : 2015-02-5 16:40:52
+// DLL id      : C:\Program Files (x86)\DHI\2014\bin\x64\pfs2004.dll
+// PFS version : Dec 16 2013 19:42:22
+
+[Mz_TimeSeriesBatchConversion]
+   CLSID = '{D0B55A9F-AB50-4B3E-83A7-6957436D1738}'
+   TypeName = 'Mz_TimeSeriesBatchConversion'
+   CREATEDTIME = '2015-02-05T16:26:05'
+   MODIFIEDTIME = '2015-02-05T16:26:05'
+   NOTES = ''
+   [Setup]
+      Name = 'Hydstra2dsf0'
+      [INPUT]
+         Type = 2
+         File_format = 2
+         Bridge = 'ASCII Timeseries Bridge (General)'
+         File_name = ||
+         Folder_name = |.\Formatted\|
+      EndSect  // INPUT
+
+      [TEMPLATE]
+         Template_option = 1
+         Template_name = |.\Formatted\template.xml|
+         Items = 0
+      EndSect  // TEMPLATE
+
+      [OUTPUT]
+         File_format = 1
+         Bridge = 'dfs Timeseries Bridge'
+         File_name = ||
+         Folder_name = |.\dfs0|
+         File_title = 'HydstraOutput'
+         Log_file = |..\|
+      EndSect  // OUTPUT
+
+   EndSect  // Setup
+
+EndSect  // Mz_TimeSeriesBatchConversion
+

@@ -1,23 +1,24 @@
 #velocity validation
 #get results
 #file<-"Modelling/ModelOutputs/Lock13-TSOut.txt"
+library(ggplot2)
 
-Model=2
+Model=1
 
-if(Model==1) file<-"E:/L3Trial/Observed/Lock13-TSOut.txt"
+if(Model==1) file<-"Modelling/ModelOutputs/Lock13-TSOut.txt"
 if(Model==2) file<-"Modelling/ModelOutputs/Kat-TSOut.txt"
 
-Chainage<-read.table(file,sep="",skip=3,nrows=1,stringsAsFactors=FALSE)
-Variable<-read.table(file,sep="",skip=4,nrows=1,stringsAsFactors=FALSE)
-Results<-read.table(file,sep="",skip=8,nrows=length(readLines(file))-10,stringsAsFactors=FALSE)
+Chainage<-read.table(file,sep=",",skip=3,nrows=1,stringsAsFactors=FALSE)
+Variable<-read.table(file,sep=",",skip=4,nrows=1,stringsAsFactors=FALSE,strip.white = TRUE)
+Results<-read.table(file,sep=",",skip=8,nrows=length(readLines(file))-10,stringsAsFactors=FALSE)
 
 VData<-read.csv("SARDIVelocityData/2014VelocityMeasurements.csv",stringsAsFactors=FALSE)
 
 if(Model==1) VData$Chainage<-(as.numeric(substr(VData$Transect,1,3))-274.25)*1000
 if(Model==2) VData$Chainage<- 135750 -(as.numeric(substr(VData$Transect,1,3))-431.4)*1000
 
-if(Model==1) velvar<-which(Variable=="V")
-if(Model==2) velvar<-which(Variable=="Velocity")
+velvar<-which(Variable=="V")
+
 #measurement every 5th row
 start<-1 #make 1 when got new data
 VMod<-NULL
@@ -46,11 +47,12 @@ colnames(VData)<-names
 VData$date<-as.Date(VData$date,"%d/%m/%Y")+1
 
 VData$Scenario<-"Monitoring"
-VMod$Scenario<-"Modelled"
+VMod$Scenario<-"Model"
 
 V<-rbind(VData,VMod)
+V$SurveyS<-factor(V$Survey,levels=unique(V$Survey)) #fix order on X axis
 
-p<-ggplot(V,aes(x=Survey,y=U,colour=Scenario))+ geom_violin(scale="width",aes(fill=Scenario)) +
-  facet_wrap(~ Location , ncol=3)+ylab("Velocity (m/s)")+ theme(legend.position="top")
+p<-ggplot(V,aes(x=SurveyS,y=U,colour=Scenario))+ geom_violin(scale="width",aes(fill=Scenario)) +
+  facet_wrap(~ Location , ncol=3)+ylab("Velocity (m/s)")+ theme(legend.position="top") + xlab("Survey Date")
 if(Model==1) ggsave("Modelling/Plots/L3-L1/Velocity.png",p,width=15.5,height=20,units="cm")
 if(Model==2) ggsave("Modelling/Plots/Kat/Velocity.png",p,width=15.5,height=20,units="cm") 

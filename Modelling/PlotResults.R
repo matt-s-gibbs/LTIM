@@ -55,7 +55,8 @@ if(Model==3)
   NameLevel<-c( "DS Lock 6","US Lock 5","DS Lock 5","Lyrup PS","Berri PS","US Lock 4")
   FolderLevel<-    c("Flow",    "Level",   "Flow",    "Level",    "Level",   "Level")
   HydstraLevel<-c("A4260511","A4260512","A4260513","A4260663","A4260537","A4260514")
-  ChainageLevel<-c(0,        57693.850,  57834.150,82940.600,91938.400,105174.970)
+  #ChainageLevel<-c(0,        57693.850,  57834.150,82940.600,91938.400,105174.970)
+  ChainageLevel<-c(0,        57693.850,  57834.150,82940.6,97373.1,105174.970)
   
   #Flow
   NameFlow<-  c("DS Lock 5","DS Lock4")

@@ -1,0 +1,17 @@
+Sequence:
+ExportData.R - export data from Hydstra
+ProcessData. R - converts hydstra output into MDMS output
+AllData.R - converts hydstra data into format for MIKE conversion
+Hydstra2dsf0.mzt - convert alldata.r output into dfs0 files.
+
+Copy relevent files to relevent models.
+Run models, make sure diversions and ewater are set to zero
+
+Run modelling/PlotResults.R
+
+Create diversion files, add to models and rerun to match flows.
+
+Check model calibration (rerun model and PlotResults.R)
+
+When happy, remove ewater.
+

@@ -3,7 +3,7 @@ library(hydroGOF)
 library(hydroTSM)
 library(ggplot2)
 
-for(Model in c(1,3))
+for(Model in 2)
 {
 
 if(Model==1)
@@ -43,7 +43,8 @@ if(Model==2)
   ChainageFlow<-c(46750.000,135760.152)
   
   #get results
-  file<-"Modelling/ModelOutputs/Kat-TSOut.txt"
+  #file<-"Modelling/ModelOutputs/Kat-TSOut.txt"
+  file<-"D:\\LTIM\\Kat_M11\\Results\\Kat-TSOut.txt"
   
   OutFolder<-"Kat"
   

@@ -1,5 +1,8 @@
 library(xts)
 library(ggplot2)
+library(Hmisc) #for weighted 
+
+#NOTE FIXED DATE AROUND LINE 170
 
 VelocityQuantiles<-function(file,Split,LevelLocations,WPNames)
 {
@@ -19,16 +22,27 @@ VelocityQuantiles<-function(file,Split,LevelLocations,WPNames)
   
     Col1<-which(Variable=="V")
     
-    if(i==1)  Col2<-which(Chainage <Split)
-    if(i==2)  Col2<-which(Chainage >=Split)
+    if(i==1)
+    {
+      Col2<-which(Chainage <Split)
+    }
+    if(i==2)
+    {
+      Col2<-which(Chainage >=Split)
+    }
     
     Col<-intersect(Col1,Col2)
     Y<-xts(Results[,Col],Date)
     Y<-window(Y,start=as.POSIXct("2014-07-01 00:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))
     
-    Q<-t(apply(Y,1,function(x) quantile(x,c(0.1,0.25,0.5,0.75,0.9))))
+    #weight velocities by distance between chainages to account for  uneven representation.
+    WeightsDummy<-as.numeric(c(0,Chainage[Col],Chainage[Col[length(Col)]]))
+    WeightsDummy<-diff(WeightsDummy)
+    Weights<-rollsum(WeightsDummy/2,2)
+    
+    Q<-t(apply(Y,1,function(x) wtd.quantile(x,weights=Weights,probs=c(0.1,0.5,0.9))))
     Q<-as.data.frame(Q)
-    colnames(Q)<-c("Q10","Q25","Q50","Q75","Q90")
+    colnames(Q)<-c("Q10","Q50","Q90")
     Q$Date<-index(Y)
     
     if(i==1)
@@ -65,29 +79,48 @@ VelocityQuantiles<-function(file,Split,LevelLocations,WPNames)
 
 LoadResults<-function(folder,Model,Runs,RunNames,Lock,LevelLocations,WPNames)
 {
-  file<-paste0(folder,"/",Model,Runs[1])
-  O<-VelocityQuantiles(file,Lock,LevelLocations,WPNames)
-  QO<-O[[1]]
-  WLO<-O[[2]]
-  QO$Scenario<-RunNames[1]
-  WLO$Scenario<-RunNames[1]
-  
-  file<-paste0(folder,"/",Model,Runs[2])
-  NEW<-VelocityQuantiles(file,Lock,LevelLocations,WPNames)
-  QNEW<-NEW[[1]]
-  WLNEW<-NEW[[2]]
-  QNEW$Scenario<-RunNames[2]
-  WLNEW$Scenario<-RunNames[2]
-  
-  Q<-rbind(QO,QNEW)
-  WL<-rbind(WLO,WLNEW)
+  for(i in 1:length(Runs))
+  {
+    file<-paste0(folder,"/",Model,Runs[i])
+    O<-VelocityQuantiles(file,Lock,LevelLocations,WPNames)
+    QO<-O[[1]]
+    WLO<-O[[2]]
+    QO$Scenario<-RunNames[i]
+    WLO$Scenario<-RunNames[i]
+    
+    if(i ==1)
+    {
+      Q<-QO
+      WL<-WLO
+    }else
+    {
+      Q<-rbind(Q,QO)
+      WL<-rbind(WL,WLO)
+    }
+  }
   
   return(list(Q,WL))
 }
 
+getSeason <- function(DATES) {
+  #2012 used as it is a leap year
+  WS <- as.Date("2012-06-01", format = "%Y-%m-%d") # Winter start
+  SE <- as.Date("2012-09-01",  format = "%Y-%m-%d") # Spring start
+  SS <- as.Date("2012-12-01",  format = "%Y-%m-%d") # Summer start
+  FE <- as.Date("2012-03-01",  format = "%Y-%m-%d") # Autumn Start
+  
+  # Convert dates from any year to 2012 dates
+  d <- as.Date(strftime(DATES, format="2012-%m-%d"))
+  
+  ifelse (d >= WS & d < SE, "Winter",
+          ifelse (d >= SE & d < SS, "Spring",
+                  ifelse (d >= SS | d < FE, "Summer", "Autumn")))
+}
+
+
 folder<-"E:\\LTIM\\ModelOutputs"
-Runs<-c("-TSOut-Historic.txt","-TSOut-NoEwater.txt")
-RunNames<-c("With eWater","No eWater")
+Runs<-c("-TSOut-Historic.txt","-TSOut-NoEwater.txt","-TSOut-withoutCEW.txt")
+RunNames<-c("With eWater","No eWater","No CEW")
 
 Model<-"Lock13"
 Lock<-88000
@@ -101,8 +134,17 @@ WL<-X[[2]]
 
 Model<-"Pike"
 Lock<-57693.850
-WPNames<-c("Weir Pool 6","Weir Pool 5")
+WPNames<-c("Weir Pool 5","Weir Pool 4P")
 LevelLocations<-c(27849.1,0,81966.6,57834.150)
+X<-LoadResults(folder,Model,Runs,RunNames,Lock,LevelLocations,WPNames)
+
+Q<-rbind(Q,X[[1]][X[[1]]$WeirPool=="Weir Pool 5",])
+WL<-rbind(WL,X[[2]][X[[2]]$WeirPool=="Weir Pool 5",])
+
+Model<-"Kat"
+Lock<-46500
+WPNames<-c("Weir Pool 4","Weir Pool 3")
+LevelLocations<-c(23248.033,0,91124.469,46750)
 X<-LoadResults(folder,Model,Runs,RunNames,Lock,LevelLocations,WPNames)
 
 Q<-rbind(Q,X[[1]])
@@ -112,19 +154,64 @@ WL<-rbind(WL,X[[2]])
 WL$WeirPool<-factor(WL$WeirPool,levels=sort(unique(WL$WeirPool),decreasing=TRUE))
 Q$WeirPool<-factor(Q$WeirPool,levels=sort(unique(Q$WeirPool),decreasing=TRUE))
 
-cols<-c("#009E73","#56B4E9")
+#cols<-c("#009E73","#56B4E9")
+cols<-c("#60BD68","#FAA43A","#5DA5DA") #colours from http://www.mulinblog.com/a-color-palette-optimized-for-data-visualization/
 
- pv<-ggplot(Q,aes(x=Date))+geom_ribbon(aes(ymin=Q10,ymax=Q90,fill=Scenario),alpha=0.5)+geom_line(aes(y=Q50,colour=Scenario))+
-     facet_grid(WeirPool ~ .) + ylab("Velocity (m/s)")+xlab("Date")+theme_bw()+theme(legend.position="top")+
+#time series
+
+ pv<-ggplot(Q,aes(x=Date))+geom_ribbon(aes(ymin=Q10,ymax=Q90,fill=Scenario),alpha=0.2)+geom_line(aes(y=Q50,colour=Scenario))+
+     facet_grid(WeirPool ~ .,scales="free") + ylab("Velocity (m/s)")+xlab("Date")+theme_bw()+theme(legend.position="top")+
    scale_fill_manual(values=cols)+scale_colour_manual(values=cols)
 
-pWL<-ggplot(WL,aes(x=Index,y=Value,colour=Scenario))+geom_line(aes(linetype=Location))+
+pWL1<-ggplot(subset(WL,Location=="Mid"),aes(x=Index,y=Value,colour=Scenario))+geom_line()+
   facet_grid(WeirPool ~ .,scales="free") + ylab("Level (m AHD)")+xlab("Date")+theme_bw()+
-  scale_colour_manual(values=cols)+ theme(legend.position="top",legend.direction="horizontal",legend.box="horizontal")+
-  scale_linetype_manual(values=c("dashed","solid"))
+  scale_colour_manual(values=cols)+ theme(legend.position="top",legend.direction="horizontal",legend.box="horizontal")
 
-ggsave(paste0("Assessment/Output/WaterLevel.png"),pWL,width=16,height=22,units="cm",dpi=300)
+pWL2<-ggplot(subset(WL,Location=="Upper"))+geom_line(aes(x=Index,y=Value,colour=Scenario))+
+  facet_grid(WeirPool ~ .,scales="free") + ylab("Level (m AHD)")+xlab("Date")+theme_bw()+
+  scale_colour_manual(values=cols)+ theme(legend.position="top",legend.direction="horizontal",legend.box="horizontal")
+
+ggsave(paste0("Assessment/Output/WaterLevelMid.png"),pWL1,width=16,height=22,units="cm",dpi=300)
+ggsave(paste0("Assessment/Output/WaterLevelUpper.png"),pWL2,width=16,height=22,units="cm",dpi=300)
 ggsave(paste0("Assessment/Output/Velocity.png"),pv,width=16,height=22,units="cm",dpi=300)
+
+#difference historgrams
+X1<-subset(Q,Scenario=="With eWater")
+X2<-subset(Q,Scenario=="No eWater")
+
+X<-data.frame(Value=X1$Q50-X2$Q50,WeirPool=X1$WeirPool,Date=X1$Date)
+Xs<-subset(X,Date>as.POSIXct("2014-09-08 00:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))  #FIXED DATE
+# 
+# p<-ggplot(Xs,aes(x=Value))+stat_ecdf(color=cols[3])+#geom_histogram(binwidth=0.01,fill=cols[3])+
+#   facet_grid(WeirPool ~ .,scales="free") + xlab("Change in median velocity (m/s)")+theme_bw()+theme(legend.position="top")+
+#   ylab("Proportion of the time the change was less than y")
+# ggsave(paste0("Assessment/Output/ChangeInVelocity.png"),p,width=16,height=22,units="cm",dpi=300)
+
+Xs$Season<-getSeason(Xs$Date)
+Xs$Season<-factor(Xs$Season,levels=c("Winter","Spring","Summer","Autumn"))
+
+p<-ggplot(Xs)+geom_histogram(binwidth=0.005,aes(x=Value,fill=Season))+
+  facet_grid(WeirPool ~ .,scales="free") + xlab("Change in median velocity (m/s)")+theme_bw()+theme(legend.position="top")+
+  ylab("Number of days")+scale_fill_manual(values=c("#5DA5DA","#60BD68","#F15854","#FAA43A"))
+ggsave(paste0("Assessment/Output/ChangeInVelocity.png"),p,width=16,height=22,units="cm",dpi=300)
+
+X1<-subset(WL,Scenario=="With eWater" & Location=="Upper")
+X2<-subset(WL,Scenario=="No eWater"& Location=="Upper")
+
+X<-data.frame(Value=X1$Value-X2$Value,WeirPool=X1$WeirPool,Date=X1$Index)
+Xs<-subset(X,Date>as.POSIXct("2014-09-08 00:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))  #FIXED DATE
+
+# p<-ggplot(Xs,aes(x=Value))+stat_ecdf(color=cols[3])+#geom_histogram(binwidth=0.01,fill=cols[3])+
+#   facet_grid(WeirPool ~ .,scales="free") + xlab("Change in upper pool water level (m)")+theme_bw()+theme(legend.position="top")+
+#   ylab("Proportion of the time the change was less than y")
+
+Xs$Season<-getSeason(Xs$Date)
+Xs$Season<-factor(Xs$Season,levels=c("Winter","Spring","Summer","Autumn"))
+
+p<-ggplot(Xs)+geom_histogram(binwidth=0.02,aes(x=Value,fill=Season))+
+  facet_grid(WeirPool ~ .,scales="free") + xlab("Change in upper pool water level (m)")+theme_bw()+theme(legend.position="top")+
+  ylab("Number of days")+scale_fill_manual(values=c("#5DA5DA","#60BD68","#F15854","#FAA43A"))
+ggsave(paste0("Assessment/Output/ChangeInWaterLevel.png"),p,width=16,height=22,units="cm",dpi=300)
 
 #+geom_ribbon(aes(ymin=Q25,ymax=Q75,fill=Scenario),alpha=0.2)
 #   geom_ribbon(data=ONEW,fill="red",aes(ymin=Q10,ymax=Q90),alpha=0.2)+geom_ribbon(data=ONEW,fill="red",aes(ymin=Q25,ymax=Q75),alpha=0.2)+geom_line(data=ONEW,colour="red",aes(y=Q50))#+

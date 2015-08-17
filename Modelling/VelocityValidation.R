@@ -3,19 +3,25 @@
 #file<-"Modelling/ModelOutputs/Lock13-TSOut.txt"
 library(ggplot2)
 
-Model=1
+Model=2
 
-if(Model==1) file<-"Modelling/ModelOutputs/Lock13-TSOut.txt"
-if(Model==2) file<-"Modelling/ModelOutputs/Kat-TSOut.txt"
+if(Model==1)
+{
+  file<-"E:\\LTIM\\ModelOutputs\\Lock13-TSOut-Historic.txt"
+  VData<-read.csv("SARDIVelocityData/2014VelocityMeasurements.csv",stringsAsFactors=FALSE)
+}
+if(Model==2) 
+{
+  file<-"E:\\LTIM\\ModelOutputs\\Kat-TSOut-Historic.txt"
+  VData<-read.csv("SARDIVelocityData/2014VelocityMeasurementsL3-L4.csv",stringsAsFactors=FALSE)
+}
 
 Chainage<-read.table(file,sep=",",skip=3,nrows=1,stringsAsFactors=FALSE)
 Variable<-read.table(file,sep=",",skip=4,nrows=1,stringsAsFactors=FALSE,strip.white = TRUE)
 Results<-read.table(file,sep=",",skip=8,nrows=length(readLines(file))-10,stringsAsFactors=FALSE)
 
-VData<-read.csv("SARDIVelocityData/2014VelocityMeasurements.csv",stringsAsFactors=FALSE)
-
 if(Model==1) VData$Chainage<-(as.numeric(substr(VData$Transect,1,3))-274.25)*1000
-if(Model==2) VData$Chainage<- 135750 -(as.numeric(substr(VData$Transect,1,3))-431.4)*1000
+if(Model==2) VData$Chainage<-(as.numeric(substr(VData$Transect,1,3))-562.4)/131*-135760.152
 
 velvar<-which(Variable=="V")
 
@@ -47,12 +53,13 @@ colnames(VData)<-names
 VData$date<-as.Date(VData$date,"%d/%m/%Y")+1
 
 VData$Scenario<-"Monitoring"
-VMod$Scenario<-"Model"
+VMod$Scenario<-"Modelled"
 
 V<-rbind(VData,VMod)
-V$SurveyS<-factor(V$Survey,levels=unique(V$Survey)) #fix order on X axis
+
+V$SurveyS<-factor(V$Survey,levels=rev(unique(V$Survey))) #fix order on X axis
 
 p<-ggplot(V,aes(x=SurveyS,y=U,colour=Scenario))+ geom_violin(scale="width",aes(fill=Scenario)) +
-  facet_wrap(~ Location , ncol=3)+ylab("Velocity (m/s)")+ theme(legend.position="top") + xlab("Survey Date")
-if(Model==1) ggsave("Modelling/Plots/L3-L1/Velocity.png",p,width=15.5,height=20,units="cm")
-if(Model==2) ggsave("Modelling/Plots/Kat/Velocity.png",p,width=15.5,height=20,units="cm") 
+  facet_wrap(~ Location , ncol=3)+ylab("Velocity (m/s)")+theme_bw()+ theme(legend.position="top") + xlab("Survey Date")
+if(Model==1) ggsave("Modelling/Plots/L3-L1/L1-L3_Velocity.png",p,width=15.5,height=15,units="cm")
+if(Model==2) ggsave("Modelling/Plots/Kat/Kat_Velocity.png",p,width=15.5,height=8,units="cm") 

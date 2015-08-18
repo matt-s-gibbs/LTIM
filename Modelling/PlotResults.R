@@ -3,7 +3,7 @@ library(hydroGOF)
 library(hydroTSM)
 library(ggplot2)
 
-for(Model in 2:3)
+for(Model in 2)
 {
 
 if(Model==1)
@@ -35,7 +35,8 @@ if(Model==2)
   NameLevel<-c( "DS Lock 5","Lyrup PS","Berri PS","US Lock 4","DS Lock 4","Solora PS","Loxton PS","US Lock 3")
   FolderLevel<-    c("Flow",    "Level",  "Level",    "Level",   "Flow",   "Level","Level",       "Level")
   HydstraLevel<-c("A4260513","A4260663","A4260537","A4260514","A4260515","A4261065","A4260550",   "A4260516")
-  ChainageLevel<-c(0,        26073.750, 37325.500,46250.000,46750.000,58454.299,69341.926,135760.152)
+  #ChainageLevel<-c(0,        26073.750, 37325.500,46250.000,46750.000,58454.299,69341.926,135760.152)
+  ChainageLevel<-c(0,        26073.750, 37325.500,46250.000,46750.000,58454.299,67057.222,135760.152)
   PlotLevel<-c(TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,FALSE)
   
   #Flow
@@ -45,8 +46,8 @@ if(Model==2)
   ChainageFlow<-c(46750.000,135760.152)
   
   #get results
-  #file<-"Modelling/ModelOutputs/Kat-TSOut.txt"
-  file<-"E:\\LTIM\\ModelOutputs\\Kat-TSOut-Historic.txt"
+  file<-"D:\\LTIM\\Kat_M11\\Results\\Kat-TSOut.txt"
+  #file<-"E:\\LTIM\\ModelOutputs\\Kat-TSOut-Historic.txt"
   
   OutFolder<-"Kat"
   

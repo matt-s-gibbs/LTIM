@@ -13,6 +13,7 @@ if(Model==1)
 if(Model==2) 
 {
   file<-"E:\\LTIM\\ModelOutputs\\Kat-TSOut-Historic.txt"
+  #file<-"D:\\LTIM\\Kat_M11\\Results\\Kat-TSOut.txt"
   VData<-read.csv("SARDIVelocityData/2014VelocityMeasurementsL3-L4.csv",stringsAsFactors=FALSE)
 }
 

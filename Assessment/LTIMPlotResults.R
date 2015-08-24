@@ -126,13 +126,16 @@ DifferencePlot<-function(X1,X2,Name,xlab,binwidth)
   Xs<-merge(X1,X2,by=c("Date","WeirPool"))
   
   Xs$Value=Xs$Value.x-Xs$Value.y
+  Xs$Value[Xs$Value<0]<-0  #zeros are possible, but this is numerical error, looks weird for plots. #CHECK!!
   
   Xs$Season<-getSeason(Xs$Date)
   Xs$Season<-factor(Xs$Season,levels=c("Winter","Spring","Summer","Autumn"))
   
   p<-ggplot(Xs)+geom_histogram(binwidth=binwidth,aes(x=Value,fill=Season))+
+    #scale_x_discrete(expand = c(0,0),limits=c(0,pretty(max(Xs$Value))[2]))+
     facet_grid(WeirPool ~ .,scales="free") + xlab(xlab)+theme_bw()+theme(legend.position="top")+
     ylab("Number of days")+scale_fill_manual(values=c("#5DA5DA","#60BD68","#F15854","#FAA43A"))
+    
   ggsave(paste0("Assessment/Output/",Name,".png"),p,width=16,height=22,units="cm",dpi=300)
   
   # 
@@ -227,5 +230,6 @@ DifferencePlot(X1,X2,Name,xlab,0.05)
 X2<-subset(WL,Scenario=="No CEW"& Location=="Upper")
 Name<-"WaterLevel_CEW"
 DifferencePlot(X1,X2,Name,xlab,0.05)
+#dummy
 
 

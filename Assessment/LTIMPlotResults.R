@@ -205,6 +205,22 @@ ggsave(paste0("Assessment/Output/WaterLevelMid.png"),pWL1,width=16,height=22,uni
 ggsave(paste0("Assessment/Output/WaterLevelUpper.png"),pWL2,width=16,height=22,units="cm",dpi=300)
 ggsave(paste0("Assessment/Output/Velocity.png"),pv,width=16,height=22,units="cm",dpi=300)
 
+
+##subsets for summary section
+A<-rbind(subset(Q,WeirPool=="Weir Pool 1"), subset(Q, WeirPool=="Weir Pool 4"))
+pv<-ggplot(A,aes(x=Date))+geom_ribbon(aes(ymin=Q10,ymax=Q90,fill=Scenario),alpha=0.2)+geom_line(aes(y=Q50,colour=Scenario))+
+  facet_grid(WeirPool ~ .,scales="free") + ylab("Velocity (m/s)")+xlab("Date")+theme_bw()+theme(legend.position="top")+
+  scale_fill_manual(values=cols)+scale_colour_manual(values=cols)
+
+A<-rbind(subset(WL,Location=="Upper"&WeirPool=="Weir Pool 1"), subset(WL,Location=="Upper"& WeirPool=="Weir Pool 4"))
+
+pWL2<-ggplot(A)+geom_line(aes(x=Index,y=Value,colour=Scenario))+
+  facet_grid(WeirPool ~ .,scales="free") + ylab("Level (m AHD)")+xlab("Date")+theme_bw()+
+  scale_colour_manual(values=cols)+ theme(legend.position="top",legend.direction="horizontal",legend.box="horizontal")
+
+  ggsave(paste0("Assessment/Output/WaterLevelUpper_Subset.png"),pWL2,width=16,height=10,units="cm",dpi=300)
+ggsave(paste0("Assessment/Output/Velocity_Subset.png"),pv,width=16,height=10,units="cm",dpi=300)
+
 #difference historgrams
 X1<-subset(Q,Scenario=="With eWater")
 colnames(X1)<-gsub("Q50","Value",colnames(X1))

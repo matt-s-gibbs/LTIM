@@ -36,11 +36,12 @@ VelocityQuantiles<-function(file,Split,LevelLocations,WPNames)
     Y<-window(Y,start=as.POSIXct("2014-07-01 00:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))
     
     #weight velocities by distance between chainages to account for  uneven representation.
-    WeightsDummy<-as.numeric(c(0,Chainage[Col],Chainage[Col[length(Col)]]))
+    WeightsDummy<-as.numeric(c(Chainage[Col[1]],Chainage[Col],Chainage[Col[length(Col)]]))
     WeightsDummy<-diff(WeightsDummy)
     Weights<-rollsum(WeightsDummy/2,2)
     
     Q<-t(apply(Y,1,function(x) wtd.quantile(x,weights=Weights,probs=c(0.1,0.5,0.9))))
+    #Q<-t(apply(Y,1,function(x) quantile(x,probs=c(0.1,0.5,0.9))))
     Q<-as.data.frame(Q)
     colnames(Q)<-c("Q10","Q50","Q90")
     Q$Date<-index(Y)
@@ -154,7 +155,7 @@ RunNames<-c("With eWater","No eWater","No CEW")
 
 Model<-"Lock13"
 Lock<-88000
-WPNames<-c("Weir Pool 1","Weir Pool 2")
+WPNames<-c("Weir Pool 1","Weir Pool 2") #chainage is backwards in this model, i.e. DS to US
 #order - mid, upper, mid, upper
 LevelLocations<-c(44000,87750,122500,157000)
 

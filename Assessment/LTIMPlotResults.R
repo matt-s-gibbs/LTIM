@@ -69,6 +69,7 @@ VelocityQuantiles<-function(file,Split,LevelLocations,WPNames)
   WL<-fortify(Y,melt=TRUE)
   WL$WeirPool<-WPNames[1]
   WL$Location<-WL$Series
+  WL$Date<-index(Y)
   WL[WL$Location==paste0("V",Col3),]$WeirPool<-WPNames[2]
   WL[WL$Location==paste0("V",Col4),]$WeirPool<-WPNames[2]
   
@@ -117,6 +118,32 @@ getSeason <- function(DATES) {
                   ifelse (d >= SS | d < FE, "Summer", "Autumn")))
 }
 
+
+DifferencePlot<-function(X1,X2,Name,xlab,binwidth)
+{
+  X1<-subset(X1,Date>as.POSIXct("2014-09-09 09:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))  #FIXED DATE
+  X2<-subset(X2,Date>as.POSIXct("2014-09-09 09:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))  #FIXED DATE
+  Xs<-merge(X1,X2,by=c("Date","WeirPool"))
+  
+  Xs$Value=Xs$Value.x-Xs$Value.y
+  
+  Xs$Season<-getSeason(Xs$Date)
+  Xs$Season<-factor(Xs$Season,levels=c("Winter","Spring","Summer","Autumn"))
+  
+  p<-ggplot(Xs)+geom_histogram(binwidth=binwidth,aes(x=Value,fill=Season))+
+    facet_grid(WeirPool ~ .,scales="free") + xlab(xlab)+theme_bw()+theme(legend.position="top")+
+    ylab("Number of days")+scale_fill_manual(values=c("#5DA5DA","#60BD68","#F15854","#FAA43A"))
+  ggsave(paste0("Assessment/Output/",Name,".png"),p,width=16,height=22,units="cm",dpi=300)
+  
+  # 
+  # p<-ggplot(Xs,aes(x=Value))+stat_ecdf(color=cols[3])+#geom_histogram(binwidth=0.01,fill=cols[3])+
+  #   facet_grid(WeirPool ~ .,scales="free") + xlab("Change in median velocity (m/s)")+theme_bw()+theme(legend.position="top")+
+  #   ylab("Proportion of the time the change was less than y")
+  # ggsave(paste0("Assessment/Output/ChangeInVelocity.png"),p,width=16,height=22,units="cm",dpi=300)
+}
+
+
+#########################################################################################################
 
 folder<-"E:\\LTIM\\ModelOutputs"
 Runs<-c("-TSOut-Historic.txt","-TSOut-NoEwater.txt","-TSOut-withoutCEW.txt")
@@ -177,42 +204,28 @@ ggsave(paste0("Assessment/Output/Velocity.png"),pv,width=16,height=22,units="cm"
 
 #difference historgrams
 X1<-subset(Q,Scenario=="With eWater")
+colnames(X1)<-gsub("Q50","Value",colnames(X1))
+xlab<-"Change in median velocity (m/s)"
+
 X2<-subset(Q,Scenario=="No eWater")
+colnames(X2)<-gsub("Q50","Value",colnames(X2))
+Name<-"Velocity_eWater"
+DifferencePlot(X1,X2,Name,xlab,0.005)
 
-X<-data.frame(Value=X1$Q50-X2$Q50,WeirPool=X1$WeirPool,Date=X1$Date)
-Xs<-subset(X,Date>as.POSIXct("2014-09-08 00:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))  #FIXED DATE
-# 
-# p<-ggplot(Xs,aes(x=Value))+stat_ecdf(color=cols[3])+#geom_histogram(binwidth=0.01,fill=cols[3])+
-#   facet_grid(WeirPool ~ .,scales="free") + xlab("Change in median velocity (m/s)")+theme_bw()+theme(legend.position="top")+
-#   ylab("Proportion of the time the change was less than y")
-# ggsave(paste0("Assessment/Output/ChangeInVelocity.png"),p,width=16,height=22,units="cm",dpi=300)
+X2<-subset(Q,Scenario=="No CEW")
+colnames(X2)<-gsub("Q50","Value",colnames(X2))
+Name<-"Velocity_CEW"
+DifferencePlot(X1,X2,Name,xlab,0.005)
 
-Xs$Season<-getSeason(Xs$Date)
-Xs$Season<-factor(Xs$Season,levels=c("Winter","Spring","Summer","Autumn"))
+X1<-subset(WL,Scenario=="With eWater"& Location=="Upper")
+xlab<-"Change in upper pool water level (m)"
 
-p<-ggplot(Xs)+geom_histogram(binwidth=0.005,aes(x=Value,fill=Season))+
-  facet_grid(WeirPool ~ .,scales="free") + xlab("Change in median velocity (m/s)")+theme_bw()+theme(legend.position="top")+
-  ylab("Number of days")+scale_fill_manual(values=c("#5DA5DA","#60BD68","#F15854","#FAA43A"))
-ggsave(paste0("Assessment/Output/ChangeInVelocity.png"),p,width=16,height=22,units="cm",dpi=300)
+X2<-subset(WL,Scenario=="No eWater" & Location=="Upper")
+Name<-"WaterLevel_eWater"
+DifferencePlot(X1,X2,Name,xlab,0.05)
 
-X1<-subset(WL,Scenario=="With eWater" & Location=="Upper")
-X2<-subset(WL,Scenario=="No eWater"& Location=="Upper")
+X2<-subset(WL,Scenario=="No CEW"& Location=="Upper")
+Name<-"WaterLevel_CEW"
+DifferencePlot(X1,X2,Name,xlab,0.05)
 
-X<-data.frame(Value=X1$Value-X2$Value,WeirPool=X1$WeirPool,Date=X1$Index)
-Xs<-subset(X,Date>as.POSIXct("2014-09-08 00:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))  #FIXED DATE
 
-# p<-ggplot(Xs,aes(x=Value))+stat_ecdf(color=cols[3])+#geom_histogram(binwidth=0.01,fill=cols[3])+
-#   facet_grid(WeirPool ~ .,scales="free") + xlab("Change in upper pool water level (m)")+theme_bw()+theme(legend.position="top")+
-#   ylab("Proportion of the time the change was less than y")
-
-Xs$Season<-getSeason(Xs$Date)
-Xs$Season<-factor(Xs$Season,levels=c("Winter","Spring","Summer","Autumn"))
-
-p<-ggplot(Xs)+geom_histogram(binwidth=0.02,aes(x=Value,fill=Season))+
-  facet_grid(WeirPool ~ .,scales="free") + xlab("Change in upper pool water level (m)")+theme_bw()+theme(legend.position="top")+
-  ylab("Number of days")+scale_fill_manual(values=c("#5DA5DA","#60BD68","#F15854","#FAA43A"))
-ggsave(paste0("Assessment/Output/ChangeInWaterLevel.png"),p,width=16,height=22,units="cm",dpi=300)
-
-#+geom_ribbon(aes(ymin=Q25,ymax=Q75,fill=Scenario),alpha=0.2)
-#   geom_ribbon(data=ONEW,fill="red",aes(ymin=Q10,ymax=Q90),alpha=0.2)+geom_ribbon(data=ONEW,fill="red",aes(ymin=Q25,ymax=Q75),alpha=0.2)+geom_line(data=ONEW,colour="red",aes(y=Q50))#+
-# #  geom_ribbon(data=ONWP,fill="blue",aes(ymin=Q10,ymax=Q90),alpha=0.2)+geom_ribbon(data=ONWP,fill="blue",aes(ymin=Q25,ymax=Q75),alpha=0.2)+geom_line(data=ONWP,colour="blue",aes(y=Q50))

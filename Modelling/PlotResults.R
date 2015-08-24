@@ -3,7 +3,7 @@ library(hydroGOF)
 library(hydroTSM)
 library(ggplot2)
 
-for(Model in 2:3)
+for(Model in 1:3)
 {
 
 if(Model==1)

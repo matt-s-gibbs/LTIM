@@ -7,7 +7,7 @@ Hydstra2dsf0.mzt - convert alldata.r output into dfs0 files.
 Copy relevent files to relevent models.
 Run models, make sure diversions and ewater are set to zero
 
-Run modelling/PlotResults.R
+Run modelling/PlotResults.R to compare model results of actual conditions to hydstra data and calculate diversions
 
 Create diversion files, add to models and rerun to match flows.
 
@@ -15,3 +15,5 @@ Check model calibration (rerun model and PlotResults.R)
 
 When happy, remove ewater.
 
+Assessment/LTIMPlotResults.R to compare scenarios.
+Assessment/MDMSOutput.R to output models results for MDMS.

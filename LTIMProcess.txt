@@ -15,3 +15,5 @@ Check model calibration (rerun model and PlotResults.R)
 
 When happy, remove ewater.
 
+Assessment/LTIMPlotResults.R to compare scenarios.
+Assessment/MDMSOutput.R to output models results for MDMS.

@@ -1,5 +1,6 @@
 library(zoo)
 library(dplyr)
+library(hydroTSM)
 
 startDate<-"2014-07-01"
 Scenarios<-c("Historic","withoutCEW","NoEwater")  
@@ -72,6 +73,8 @@ for(i in 1:length(NameLevel))
   Q<-zoo(Results[,Col],Dates)
   Q[,2]<-Q[,2]*86.4 #convert flow to ML/d
   Q<-window(Q,start=startDate)
+  Q<-izoo2rzoo(Q) #for some reason, MIKE output misses a day or two randomly
+  Q<-na.approx(Q)
   
   Data<-data.frame(Q)
   colnames(Data)<-c("WL","Q","V")

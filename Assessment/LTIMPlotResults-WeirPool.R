@@ -137,21 +137,21 @@ DifferencePlot<-function(X1,X2,Name,xlab,binwidth)
     facet_grid(WeirPool ~ .,scales="free") + xlab(xlab)+theme_bw()+theme(legend.position="top")+
     ylab("Number of days")+scale_fill_manual(values=c("#5DA5DA","#60BD68","#F15854","#FAA43A"))
     
-  ggsave(paste0("Assessment/Output/",Name,".png"),p,width=16,height=22,units="cm",dpi=300)
+  ggsave(paste0("Assessment/OutputWP/",Name,".png"),p,width=16,height=22,units="cm",dpi=300)
   
   # 
   # p<-ggplot(Xs,aes(x=Value))+stat_ecdf(color=cols[3])+#geom_histogram(binwidth=0.01,fill=cols[3])+
   #   facet_grid(WeirPool ~ .,scales="free") + xlab("Change in median velocity (m/s)")+theme_bw()+theme(legend.position="top")+
   #   ylab("Proportion of the time the change was less than y")
-  # ggsave(paste0("Assessment/Output/ChangeInVelocity.png"),p,width=16,height=22,units="cm",dpi=300)
+  # ggsave(paste0("Assessment/OutputWP/ChangeInVelocity.png"),p,width=16,height=22,units="cm",dpi=300)
 }
 
 
 #########################################################################################################
 
 folder<-"E:\\LTIM\\ModelOutputs"
-Runs<-c("-TSOut-Historic.txt","-TSOut-NoEwater.txt","-TSOut-withoutCEW.txt")
-RunNames<-c("With eWater","No eWater","No CEW")
+Runs<-c("-TSOut-Historic.txt","-TSOut-noweirpool.txt")
+RunNames<-c("Observed","No WP Raising")
 
 Model<-"Lock13"
 Lock<-88000
@@ -163,30 +163,31 @@ X<-LoadResults(folder,Model,Runs,RunNames,Lock,LevelLocations,WPNames)
 Q<-X[[1]]
 WL<-X[[2]]
 
-Model<-"Pike"
-Lock<-57693.850
-WPNames<-c("Weir Pool 5","Weir Pool 4P")
-LevelLocations<-c(27849.1,0,81966.6,57834.150)
-X<-LoadResults(folder,Model,Runs,RunNames,Lock,LevelLocations,WPNames)
-
-Q<-rbind(Q,X[[1]][X[[1]]$WeirPool=="Weir Pool 5",])
-WL<-rbind(WL,X[[2]][X[[2]]$WeirPool=="Weir Pool 5",])
-
-Model<-"Kat"
-Lock<-46500
-WPNames<-c("Weir Pool 4","Weir Pool 3")
-LevelLocations<-c(23248.033,0,91124.469,46750)
-X<-LoadResults(folder,Model,Runs,RunNames,Lock,LevelLocations,WPNames)
-
-Q<-rbind(Q,X[[1]])
-WL<-rbind(WL,X[[2]])
+# Model<-"Pike"
+# Lock<-57693.850
+# WPNames<-c("Weir Pool 5","Weir Pool 4P")
+# LevelLocations<-c(27849.1,0,81966.6,57834.150)
+# X<-LoadResults(folder,Model,Runs,RunNames,Lock,LevelLocations,WPNames)
+# 
+# Q<-rbind(Q,X[[1]][X[[1]]$WeirPool=="Weir Pool 5",])
+# WL<-rbind(WL,X[[2]][X[[2]]$WeirPool=="Weir Pool 5",])
+# 
+# Model<-"Kat"
+# Lock<-46500
+# WPNames<-c("Weir Pool 4","Weir Pool 3")
+# LevelLocations<-c(23248.033,0,91124.469,46750)
+# X<-LoadResults(folder,Model,Runs,RunNames,Lock,LevelLocations,WPNames)
+# 
+# Q<-rbind(Q,X[[1]])
+# WL<-rbind(WL,X[[2]])
 
 #sort from L6-L1
 WL$WeirPool<-factor(WL$WeirPool,levels=sort(unique(WL$WeirPool),decreasing=TRUE))
 Q$WeirPool<-factor(Q$WeirPool,levels=sort(unique(Q$WeirPool),decreasing=TRUE))
 
 #cols<-c("#009E73","#56B4E9")
-cols<-c("#60BD68","#FAA43A","#5DA5DA") #colours from http://www.mulinblog.com/a-color-palette-optimized-for-data-visualization/
+#cols<-c("#60BD68","#FAA43A","#5DA5DA") #colours from http://www.mulinblog.com/a-color-palette-optimized-for-data-visualization
+cols<-c("#60BD68","#5DA5DA") #colours from http://www.mulinblog.com/a-color-palette-optimized-for-data-visualization/
 
 #time series
 
@@ -202,51 +203,51 @@ pWL2<-ggplot(subset(WL,Location=="Upper"))+geom_line(aes(x=Index,y=Value,colour=
   facet_grid(WeirPool ~ .,scales="free") + ylab("Level (m AHD)")+xlab("Date")+theme_bw()+
   scale_colour_manual(values=cols)+ theme(legend.position="top",legend.direction="horizontal",legend.box="horizontal")
 
-ggsave(paste0("Assessment/Output/WaterLevelMid.png"),pWL1,width=16,height=22,units="cm",dpi=300)
-ggsave(paste0("Assessment/Output/WaterLevelUpper.png"),pWL2,width=16,height=22,units="cm",dpi=300)
-ggsave(paste0("Assessment/Output/Velocity.png"),pv,width=16,height=22,units="cm",dpi=300)
+ggsave(paste0("Assessment/OutputWP/WaterLevelMid.png"),pWL1,width=16,height=22,units="cm",dpi=300)
+ggsave(paste0("Assessment/OutputWP/WaterLevelUpper.png"),pWL2,width=16,height=22,units="cm",dpi=300)
+ggsave(paste0("Assessment/OutputWP/Velocity.png"),pv,width=16,height=22,units="cm",dpi=300)
 
-
-##subsets for summary section
-A<-rbind(subset(Q,WeirPool=="Weir Pool 1"), subset(Q, WeirPool=="Weir Pool 4"))
-pv<-ggplot(A,aes(x=Date))+geom_ribbon(aes(ymin=Q10,ymax=Q90,fill=Scenario),alpha=0.2)+geom_line(aes(y=Q50,colour=Scenario))+
-  facet_grid(WeirPool ~ .,scales="free") + ylab("Velocity (m/s)")+xlab("Date")+theme_bw()+theme(legend.position="top")+
-  scale_fill_manual(values=cols)+scale_colour_manual(values=cols)+scale_y_continuous(breaks=c(0,0.1,0.18,0.3,0.5))
-
-A<-rbind(subset(WL,Location=="Upper"&WeirPool=="Weir Pool 1"), subset(WL,Location=="Upper"& WeirPool=="Weir Pool 4"))
-
-pWL2<-ggplot(A)+geom_line(aes(x=Index,y=Value,colour=Scenario))+
-  facet_grid(WeirPool ~ .,scales="free") + ylab("Level (m AHD)")+xlab("Date")+theme_bw()+
-  scale_colour_manual(values=cols)+ theme(legend.position="top",legend.direction="horizontal",legend.box="horizontal")
-
-  ggsave(paste0("Assessment/Output/WaterLevelUpper_Subset.png"),pWL2,width=16,height=10,units="cm",dpi=300)
-ggsave(paste0("Assessment/Output/Velocity_Subset.png"),pv,width=16,height=10,units="cm",dpi=300)
-
-#difference historgrams
-X1<-subset(Q,Scenario=="With eWater")
-colnames(X1)<-gsub("Q50","Value",colnames(X1))
-xlab<-"Change in median velocity (m/s)"
-
-X2<-subset(Q,Scenario=="No eWater")
-colnames(X2)<-gsub("Q50","Value",colnames(X2))
-Name<-"Velocity_eWater"
-DifferencePlot(X1,X2,Name,xlab,0.005)
-
-X2<-subset(Q,Scenario=="No CEW")
-colnames(X2)<-gsub("Q50","Value",colnames(X2))
-Name<-"Velocity_CEW"
-DifferencePlot(X1,X2,Name,xlab,0.005)
-
-X1<-subset(WL,Scenario=="With eWater"& Location=="Upper")
-xlab<-"Change in upper pool water level (m)"
-
-X2<-subset(WL,Scenario=="No eWater" & Location=="Upper")
-Name<-"WaterLevel_eWater"
-DifferencePlot(X1,X2,Name,xlab,0.05)
-
-X2<-subset(WL,Scenario=="No CEW"& Location=="Upper")
-Name<-"WaterLevel_CEW"
-DifferencePlot(X1,X2,Name,xlab,0.05)
-#dummy
+# 
+# ##subsets for summary section
+# A<-rbind(subset(Q,WeirPool=="Weir Pool 1"), subset(Q, WeirPool=="Weir Pool 4"))
+# pv<-ggplot(A,aes(x=Date))+geom_ribbon(aes(ymin=Q10,ymax=Q90,fill=Scenario),alpha=0.2)+geom_line(aes(y=Q50,colour=Scenario))+
+#   facet_grid(WeirPool ~ .,scales="free") + ylab("Velocity (m/s)")+xlab("Date")+theme_bw()+theme(legend.position="top")+
+#   scale_fill_manual(values=cols)+scale_colour_manual(values=cols)+scale_y_continuous(breaks=c(0,0.1,0.18,0.3,0.5))
+# 
+# A<-rbind(subset(WL,Location=="Upper"&WeirPool=="Weir Pool 1"), subset(WL,Location=="Upper"& WeirPool=="Weir Pool 4"))
+# 
+# pWL2<-ggplot(A)+geom_line(aes(x=Index,y=Value,colour=Scenario))+
+#   facet_grid(WeirPool ~ .,scales="free") + ylab("Level (m AHD)")+xlab("Date")+theme_bw()+
+#   scale_colour_manual(values=cols)+ theme(legend.position="top",legend.direction="horizontal",legend.box="horizontal")
+# 
+#   ggsave(paste0("Assessment/OutputWP/WaterLevelUpper_Subset.png"),pWL2,width=16,height=10,units="cm",dpi=300)
+# ggsave(paste0("Assessment/OutputWP/Velocity_Subset.png"),pv,width=16,height=10,units="cm",dpi=300)
+# 
+# #difference historgrams
+# X1<-subset(Q,Scenario=="With eWater")
+# colnames(X1)<-gsub("Q50","Value",colnames(X1))
+# xlab<-"Change in median velocity (m/s)"
+# 
+# X2<-subset(Q,Scenario=="No eWater")
+# colnames(X2)<-gsub("Q50","Value",colnames(X2))
+# Name<-"Velocity_eWater"
+# DifferencePlot(X1,X2,Name,xlab,0.005)
+# 
+# X2<-subset(Q,Scenario=="No CEW")
+# colnames(X2)<-gsub("Q50","Value",colnames(X2))
+# Name<-"Velocity_CEW"
+# DifferencePlot(X1,X2,Name,xlab,0.005)
+# 
+# X1<-subset(WL,Scenario=="With eWater"& Location=="Upper")
+# xlab<-"Change in upper pool water level (m)"
+# 
+# X2<-subset(WL,Scenario=="No eWater" & Location=="Upper")
+# Name<-"WaterLevel_eWater"
+# DifferencePlot(X1,X2,Name,xlab,0.05)
+# 
+# X2<-subset(WL,Scenario=="No CEW"& Location=="Upper")
+# Name<-"WaterLevel_CEW"
+# DifferencePlot(X1,X2,Name,xlab,0.05)
+# #dummy
 
 

@@ -150,7 +150,7 @@ DifferencePlot<-function(X1,X2,Name,xlab,binwidth)
 #########################################################################################################
 
 folder<-"E:\\LTIM\\ModelOutputs"
-Runs<-c("-TSOut-Historic.txt","-TSOut-NoEwater.txt","-TSOut-withoutCEW.txt")
+Runs<-c("-TSOut-Historic.txt","-TSOut-WithoutAllEwater.txt","-TSOut-withoutCEW.txt")
 RunNames<-c("With eWater","No eWater","No CEW")
 
 Model<-"Lock13"

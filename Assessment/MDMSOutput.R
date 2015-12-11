@@ -3,7 +3,7 @@ library(dplyr)
 library(hydroTSM)
 
 startDate<-"2014-07-01"
-Scenarios<-c("Historic","withoutCEW","NoEwater")  
+Scenarios<-c("Historic","withoutCEW","WithoutAllEwater")  
 
 for(Scenario in Scenarios)
 {

@@ -151,7 +151,7 @@ DifferencePlot<-function(X1,X2,Name,xlab,binwidth)
 
 folder<-"E:\\LTIM\\ModelOutputs"
 Runs<-c("-TSOut-Historic.txt","-TSOut-WithoutAllEwater.txt","-TSOut-withoutCEW.txt")
-RunNames<-c("With eWater","No eWater","No CEW")
+RunNames<-c("With all water","No eWater","No CEW")
 
 Model<-"Lock13"
 Lock<-88000
@@ -223,7 +223,7 @@ pWL2<-ggplot(A)+geom_line(aes(x=Index,y=Value,colour=Scenario))+
 ggsave(paste0("Assessment/Output/Velocity_Subset.png"),pv,width=16,height=10,units="cm",dpi=300)
 
 #difference historgrams
-X1<-subset(Q,Scenario=="With eWater")
+X1<-subset(Q,Scenario=="With all water")
 colnames(X1)<-gsub("Q50","Value",colnames(X1))
 xlab<-"Change in median velocity (m/s)"
 
@@ -237,7 +237,7 @@ colnames(X2)<-gsub("Q50","Value",colnames(X2))
 Name<-"Velocity_CEW"
 DifferencePlot(X1,X2,Name,xlab,0.005)
 
-X1<-subset(WL,Scenario=="With eWater"& Location=="Upper")
+X1<-subset(WL,Scenario=="With all water"& Location=="Upper")
 xlab<-"Change in upper pool water level (m)"
 
 X2<-subset(WL,Scenario=="No eWater" & Location=="Upper")

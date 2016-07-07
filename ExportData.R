@@ -8,8 +8,9 @@
 
 source("../HydstraInput/ExportStations.R")
 
-startdate<-"09:00_01/06/2014"
-path<-"D:\\Documents\\Dropbox\\LTIM\\Cat1Indicator"
+startdate<-"09:00_01/06/2015"
+#path<-"D:\\Documents\\Dropbox\\LTIM\\Cat1Indicator"
+path<-"D:\\LTIM\\LTIM"
 
 Stations<-read.csv("Stations/FlowStations.csv",stringsAsFactors = FALSE)
 

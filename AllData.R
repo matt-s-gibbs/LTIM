@@ -2,13 +2,15 @@ library(chron)
 library(zoo)
 #source("ExportStations.R")
 
-startdate<-"09:00_01/06/2014"
+startdate<-"09:00_01/06/2015"
 path<-"D:\\MIKEHydro\\HydstraInput"
 
 Interpolate<-function(filename)
 {
-  file.copy(paste0("../Cat1Indicator/",Folder,"/",filename),paste0("Data/Orig/"),overwrite=TRUE)
-  A<-read.csv(paste0("../Cat1Indicator/",Folder,"/",filename),skip=3)
+#   file.copy(paste0("../Cat1Indicator/",Folder,"/",filename),paste0("Data/Orig/"),overwrite=TRUE)
+#   A<-read.csv(paste0("../Cat1Indicator/",Folder,"/",filename),skip=3)
+  file.copy(paste0(Folder,"/",filename),paste0("Data/Orig/"),overwrite=TRUE)
+  A<-read.csv(paste0(Folder,"/",filename),skip=3)
   A<-zoo(A[,2],as.Date(A[,1],"%H:%M:%S %d/%m/%Y"))
   A<-na.trim(A)
   print(paste(filename,":",sum(is.na(A)),"days (",round(sum(is.na(A))/length(A),2),"%) interpolated"))
@@ -16,7 +18,7 @@ Interpolate<-function(filename)
   B<-cbind(paste("09:00:00",format(index(A),"%d/%m/%Y")),as.numeric(A),1)
   
   
-  Header<-read.csv(paste0("../Cat1Indicator/",Folder,"/",filename),nrows=2,header=TRUE)
+  Header<-read.csv(paste0(Folder,"/",filename),nrows=2,header=TRUE)
   write.csv(Header,file=paste0("Data\\",filename),quote=TRUE,row.names=FALSE)
   write.table(B,file=paste0("Data\\",filename),row.names=FALSE,append=TRUE,sep=",",col.names=FALSE,quote=FALSE)
 }
@@ -25,7 +27,7 @@ Folders<-c("Level","Flow")
 for(Folder in Folders)
 {
 
-files<-list.files(paste0("../Cat1Indicator/",Folder),"*.csv")
+files<-list.files(paste0(Folder),"*.csv")
 for(f in files)
 {
   #interpolate missing values condtions

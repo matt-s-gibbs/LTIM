@@ -3,7 +3,7 @@ library(hydroGOF)
 library(hydroTSM)
 library(ggplot2)
 
-for(Model in 1:3)
+for(Model in 3)
 {
 
 if(Model==1)
@@ -23,8 +23,8 @@ HydstraFlow<-c("A4260519","A4260903","A4260517")
 ChainageFlow<-c(87250,0,157250)
 
 #get results
-#file<-"Modelling/ModelOutputs/Lock13-TSOut.txt"
-file<-"E:\\LTIM\\ModelOutputs\\Lock13-TSOut-Historic.txt"
+file<-"D:/LTIM/ModelOutputs/Lock13-TSOut.txt"
+#file<-"E:\\LTIM\\ModelOutputs\\Lock13-TSOut-Historic.txt"
 
 OutFolder<-"L3-L1"
 
@@ -45,8 +45,8 @@ if(Model==2)
   ChainageFlow<-c(46750.000,135760.152)
   
   #get results
-  #file<-"Modelling/ModelOutputs/Kat-TSOut.txt"
-  file<-"E:\\LTIM\\ModelOutputs\\Kat-TSOut-Historic.txt"
+  file<-"D:/LTIM/ModelOutputs/Kat-TSOut.txt"
+  #file<-"E:\\LTIM\\ModelOutputs\\Kat-TSOut-Historic.txt"
   
   OutFolder<-"Kat"
   
@@ -69,7 +69,8 @@ if(Model==3)
   ChainageFlow<-c(57834.150,105174.970)
   
   #get results
-  file<-"E:\\LTIM\\ModelOutputs\\Pike-TSOut-Historic.txt"
+  file<-"D:\\LTIM\\ModelOutputs\\Pike-TSOut.txt"
+  #file<-"E:\\LTIM\\ModelOutputs\\Pike-TSOut-Historic.txt"
   
   OutFolder<-"Pike"
 }

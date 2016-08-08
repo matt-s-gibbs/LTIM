@@ -3,7 +3,10 @@ library(hydroGOF)
 library(hydroTSM)
 library(ggplot2)
 
-for(Model in 3)
+startDate<-"2015-07-01"
+endDate<-"2016-06-30"
+
+for(Model in 1:3)
 {
 
 if(Model==1)
@@ -112,8 +115,8 @@ for(i in 1:length(HydstraLevel))
   
   if(PlotLevel[i])
   {
-    PLO<-cbind(PLO,window(X,start="2014-07-01",end="2015-06-30"))
-    PLS<-cbind(PLS,window(Y,start="2014-07-01",end="2015-06-30"))
+    PLO<-cbind(PLO,window(X,start=startDate,end=endDate))
+    PLS<-cbind(PLS,window(Y,start=startDate,end=endDate))
   }
 }
 

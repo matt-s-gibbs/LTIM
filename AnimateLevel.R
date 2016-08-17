@@ -12,6 +12,8 @@ highChainage<-57834.150
 startDate<-"2015-07-01"
 endDate<-"2016-06-30"
 
+cols<-c("#008CE5","#005D98","#002E4C","#000000")
+
 LoadData<-function(file,lowChainage,highChainage)
 {
   Chainage<-read.table(file,sep=",",skip=3,nrows=1,stringsAsFactors=FALSE)
@@ -24,7 +26,7 @@ LoadData<-function(file,lowChainage,highChainage)
   
   Results[,1]<-as.numeric(substr(Results[,1],22,42))
   
-  Col<-which(Variable=="V"&Chainage<highChainage&Chainage>=lowChainage)
+  Col<-which(Variable=="WL"&Chainage<highChainage&Chainage>=lowChainage)
   
   Y<-zoo(Results[,Col],Dates)
   Y<-window(Y,start=startDate,end=endDate)
@@ -60,15 +62,19 @@ saveGIF({
 for(i in 1:nrow(Y))
 {
     par(mfrow=c(2,1),mar=c(5.1,4.1,0.1,1))
-    plot(as.numeric(Chainage)/1000,Y[i,],type="l",ylim=c(min(Y),max(Y)),ylab="Lock 5 Level (m AHD)",xlab="Distance Downstream (km)",col="blue")
-    lines(as.numeric(Chainage)/1000,Y_noeW[i,])
-    lines(as.numeric(Chainage)/1000,Y_noWPR[i,],col="red")
-    lines(as.numeric(Chainage)/1000,Y_neither[i,],col="green")
+    plot(as.numeric(Chainage)/1000,Y[i,],type="l",ylim=c(min(Y),max(Y)),ylab="Lock 5 Level (m AHD)",xlab="Distance Downstream (km)",col=cols[1])
+    lines(as.numeric(Chainage)/1000,Y_noeW[i,],col=cols[2],lty="dashed")
+    lines(as.numeric(Chainage)/1000,Y_noWPR[i,],col=cols[3])
+    lines(as.numeric(Chainage)/1000,Y_neither[i,],col=cols[4],lty="dashed")
+    abline(h=16.3,lty="dashed",col="grey")
+    text(0,16.32,"Pool Level",pos=4,col="grey")
   #  lines(X$x,X$y,col="grey")
+    legend("topright",legend=c("with eWater, with WPR","no eWater, with WPR","with eWater, no WPR","no eWater, no WPR"),
+           lwd=1,col=cols,lty=c("solid","dashed","solid","dashed"))
     
-    plot(Q,ylab="Lock 5 Flow (ML/d)",xlab="Date",col="blue")
-    lines(Q_noeW)
+    plot(Q,ylab="Lock 5 Flow (ML/d)",xlab="Date",col=cols[1],ylim=c(0,max(Q)))
+    lines(Q_noeW,col=cols[4])
     abline(v=.index(Q[i]),col="grey",lty="dashed")
-    
+    legend("topright",legend=c("with eWater","no eWater"),lwd=1,col=cols[c(1,4)])
 }
 },movie.name="Lock5.gif",interval=1/24,ani.height=810,ani.width=1080)

@@ -10,6 +10,9 @@ library(dplyr)
 
 #reserving 5 for modelled data only to distinguish. Using 4 for bad/extrapolated data.
 
+startDate<-"2015-07-01"
+endDate<-"2016-06-30"
+
 QualCodes<<-read.csv("Stations/QualityCodes.csv",stringsAsFactors = FALSE)
 
 MapQualityCodes<-function(data)
@@ -56,7 +59,7 @@ MDMSName<-Stations$MDMSName[s]
 A<-read.csv(paste0(Folder,"\\",Station,"_100.00_DAY_0900.csv"),skip=3,header=FALSE,stringsAsFactors=FALSE)
 A[,4]<-QualCodes[match(A[,3],QualCodes[,1]),4]
 WL<-zoo(A[,-1],as.Date(A[,1],"%H:%M:%S %d/%m/%Y"))
-WL<-window(WL,start="2014-07-01",end="2015-06-30")
+WL<-window(WL,start=startDate,end=endDate)
 colnames(WL)<-c("dailyStage (m)","dailyStagequalityCode","Comments")
 WL<-MapQualityCodes(WL)
 
@@ -73,7 +76,7 @@ if(Flow)
   A<-read.csv(paste0(Folder,"\\",Station,"_141.00_DAY_0900.csv"),skip=3,header=FALSE,stringsAsFactors=FALSE)
   A[,4]<-QualCodes[match(A[,3],QualCodes[,1]),4]
   Q<-zoo(A[,-1],as.Date(A[,1],"%H:%M:%S %d/%m/%Y"))
-  Q<-window(Q,start="2014-07-01",end="2015-06-30")
+  Q<-window(Q,start=startDate,end=endDate)
   colnames(Q)<-c("dailyVolume (ML/day)","qualityCode","Comments") 
   Q<-MapQualityCodes(Q)
   

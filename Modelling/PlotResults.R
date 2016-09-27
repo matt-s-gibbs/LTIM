@@ -6,7 +6,7 @@ library(ggplot2)
 startDate<-"2015-07-01"
 endDate<-"2016-06-30"
 
-for(Model in 1:3)
+for(Model in c(2))
 {
 
 if(Model==1)
@@ -63,7 +63,7 @@ if(Model==3)
   HydstraLevel<-c("A4260511","A4260512","A4260513","A4260663","A4260537","A4260514")
   #ChainageLevel<-c(0,        57693.850,  57834.150,82940.600,91938.400,105174.970)
   ChainageLevel<-c(0,        57693.850,  57834.150,82940.6,97373.1,105174.970)
-  PlotLevel<-c(TRUE,FALSE,TRUE,TRUE,TRUE,FALSE)
+  PlotLevel<-c(TRUE,FALSE,FALSE,FALSE,FALSE,FALSE)
   
   #Flow
   NameFlow<-  c("DS Lock 5","DS Lock4")
@@ -193,6 +193,12 @@ X<-rbind(fPLO,fPLS)
 pWL<-ggplot(X,aes(x=Index,y=Value,colour=Scenario))+geom_line()+
   facet_grid(Series ~ .,scales="free") + ylab("Level (m AHD)")+xlab("Date")+theme_bw()+theme(legend.position="top")
 #  scale_colour_manual(values=cols)+ theme(legend.position="top",legend.direction="horizontal",legend.box="horizontal")
-ggsave(paste0("Modelling/Plots/",OutFolder,"/",OutFolder,"_WaterLevelCalibration.png"),pWL,width=16,height=22,units="cm",dpi=300)
+if(Model==3)
+{
+ggsave(paste0("Modelling/Plots/",OutFolder,"/",OutFolder,"_WaterLevelCalibration.png"),pWL,width=16,height=8,units="cm",dpi=300)
+}else
+{
+  ggsave(paste0("Modelling/Plots/",OutFolder,"/",OutFolder,"_WaterLevelCalibration.png"),pWL,width=16,height=22,units="cm",dpi=300)
+}
 
 }

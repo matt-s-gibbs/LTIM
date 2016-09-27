@@ -4,7 +4,7 @@
 library(ggplot2)
 
 #Pike not working, not enough cross sections
-Model=2
+Model=1
 
 if(Model==1)
 {
@@ -73,6 +73,6 @@ V$SurveyS<-factor(V$Survey,levels=rev(unique(V$Survey))) #fix order on X axis
 
 p<-ggplot(V,aes(x=SurveyS,y=U,colour=Scenario))+ geom_violin(scale="width",aes(fill=Scenario)) +
   facet_wrap(~ Location , ncol=3)+ylab("Velocity (m/s)")+theme_bw()+ theme(legend.position="top") + xlab("Survey Date")
-if(Model==1) ggsave("Modelling/Plots/L3-L1/L1-L3_Velocity.png",p,width=15.5,height=15,units="cm")
+if(Model==1) ggsave("Modelling/Plots/L3-L1/L1-L3_Velocity.png",p,width=15.5,height=8,units="cm")
 if(Model==2) ggsave("Modelling/Plots/Kat/Kat_Velocity.png",p,width=15.5,height=8,units="cm") 
 if(Model==3) ggsave("Modelling/Plots/Pike/Pike_Velocity.png",p,width=15.5,height=8,units="cm") 

@@ -6,21 +6,21 @@ library(xts)
 #Change to river km
 
 
-fileHistoric<-"D:\\LTIM\\ModelOutputs\\Pike-Historic.txt"
-filenoEwater<-"D:\\LTIM\\ModelOutputs\\Pike-NoCEWO.txt"
-filenoRaising<-"D:\\LTIM\\ModelOutputs\\Pike-NoRaising.txt"
-fileneither<-"D:\\LTIM\\ModelOutputs\\Pike-NoCEWO-NoRaising.txt"
+fileHistoric<-"D:\\LTIM\\ModelOutputs\\Lock13-Historic.txt"
+filenoEwater<-"D:\\LTIM\\ModelOutputs\\Lock13-NoCEWO.txt"
+filenoRaising<-"D:\\LTIM\\ModelOutputs\\Lock13-NoRaising.txt"
+fileneither<-"D:\\LTIM\\ModelOutputs\\Lock13-NoCEWO-NoRaising.txt"
   
-lowChainage<-0
-highChainage<-57834.150
+lowChainage<-88000.000
+highChainage<-157250
 startDate<-"2015-07-01"
 endDate<-"2016-06-30"
-
-PlotVariable<-"V"
-Label<-"Lock 5 Velocity (m/s)"
 # 
- # PlotVariable<-"WL"
- #  Label<-"Lock 5 Level (m AHD)"
+# PlotVariable<-"V"
+# Label<-"Lock 2 Velocity (m/s)"
+
+ PlotVariable<-"WL"
+  Label<-"Lock 2 Level (m AHD)"
 
 cols<-c("#008CE5","#000000","#008CE5","#000000")
 
@@ -53,6 +53,7 @@ X<-LoadData(fileHistoric,lowChainage,highChainage)
 Y<-X[["WL"]]
 Q<-X[["Q"]]
 Chainage<-X[["Chainage"]]
+Chainage<-rev(Chainage-lowChainage)
 
 X<-LoadData(filenoEwater,lowChainage,highChainage)
 Y_noeW<-X[["WL"]]
@@ -81,35 +82,35 @@ for(i in 1:nrow(Y))
 
     if(PlotVariable=="WL")
     {
-      text(30,16.27,"Pool Level",col="grey")
-      abline(h=16.3,lty="dotdash",col="grey")
+      text(34.5,6.07,"Pool Level",col="grey")
+      abline(h=6.1,lty="dotdash",col="grey")
     }
     abline(v=max(Chainage)/1000,lty="dotdash",col="grey")
     abline(v=0,lty="dotdash",col="grey")
     
     if(PlotVariable=="WL")
     {
-    text(-1,16.35,"Lock 6",col="grey",srt=90,pos=4)
-    text(57.5,16.35,"Lock 5",col="grey",srt=90,pos=4)
+      text(-2.5,6.15,"Lock 3",col="grey",srt=90,pos=4)
+      text(69.1,6.15,"Lock 2",col="grey",srt=90,pos=4)
     }else
     {
-      text(-1,0.05,"Lock 6",col="grey",srt=90,pos=4)
-      text(57.5,0.05,"Lock 5",col="grey",srt=90,pos=4)
+      text(-1,0.05,"Lock 3",col="grey",srt=90,pos=4)
+      text(69.5,0.05,"Lock 2",col="grey",srt=90,pos=4)
     }
-
+  
   #  lines(X$x,X$y,col="grey")
     legend("topright",legend=c("with CEWO, with WPR","no CEWO, with WPR","with CEWO, no WPR","no CEWO, no WPR"),
            lwd=1,col=cols,lty=c("solid","longdash","longdash","solid"))
     
-    plot(Q,ylab="Lock 5 Flow (ML/d)",xlab="Date",col=cols[1],ylim=c(0,max(Q)))
+    plot(Q,ylab="Lock 2 Flow (ML/d)",xlab="Date",col=cols[1],ylim=c(0,max(Q)))
     lines(Q_noeW,col=cols[4])
     abline(v=.index(Q[i]),col="grey",lty="dashed")
     legend("topright",legend=c("with CEW","without CEW"),lwd=1,col=cols[c(1,4)])
 }
-},movie.name=paste0("Lock5",PlotVariable,".gif"),interval=1/24,ani.height=684,ani.width=1188)
+},movie.name=paste0("Lock2",PlotVariable,".gif"),interval=1/24,ani.height=684,ani.width=1188)
 
 
-i<-which(index(Y)=="2015-10-13")
+i<-which(index(Y)=="2015-10-31")
 # 
 # png(paste0("GIFs/",PlotVariable,"_Q.png"),width=15,height=20,units="cm",res=300)
 # par(mfrow=c(2,1),mar=c(5.1,4.1,0.1,1))
@@ -161,24 +162,29 @@ lines(as.numeric(Chainage)/1000,Y_noWPR[i,],col=cols[3],lty="longdash")
 lines(as.numeric(Chainage)/1000,Y_neither[i,],col=cols[4])
 if(PlotVariable=="WL")
 {
-  text(30,16.27,"Pool Level",col="grey")
-  abline(h=16.3,lty="dotdash",col="grey")
+  text(34.5,6.07,"Pool Level",col="grey")
+  abline(h=6.1,lty="dotdash",col="grey")
 }
 abline(v=max(Chainage)/1000,lty="dotdash",col="grey")
 abline(v=0,lty="dotdash",col="grey")
 
 if(PlotVariable=="WL")
 {
-  text(-2.2,16.35,"Lock 6",col="grey",srt=90,pos=4)
-  text(57.5,16.35,"Lock 5",col="grey",srt=90,pos=4)
+  text(-2.5,6.15,"Lock 3",col="grey",srt=90,pos=4)
+  text(69.1,6.15,"Lock 2",col="grey",srt=90,pos=4)
 }else
 {
-  text(-2.2,0.05,"Lock 6",col="grey",srt=90,pos=4)
-  text(57.5,0.05,"Lock 5",col="grey",srt=90,pos=4)
+  text(-2.5,0.05,"Lock 3",col="grey",srt=90,pos=4)
+  text(69.1,0.05,"Lock 2",col="grey",srt=90,pos=4)
 }
-
 #  lines(X$x,X$y,col="grey")
-legend(x=30,y=0.4,xpd=TRUE,xjust=0.5,yjust=0,legend=c("with CEWO, with WPR","no CEWO, with WPR","with CEWO, no WPR","no CEWO, no WPR"),
+if(PlotVariable=="WL")
+{
+legend(x=34.5,y=6.95,xpd=TRUE,xjust=0.5,yjust=0,legend=c("with CEWO, with WPR","no CEWO, with WPR","with CEWO, no WPR","no CEWO, no WPR"),
        lwd=1,col=cols,lty=c("solid","longdash","longdash","solid"),ncol=2)
-
+}else
+{
+  legend(x=34.5,y=0.4,xpd=TRUE,xjust=0.5,yjust=0,legend=c("with CEWO, with WPR","no CEWO, with WPR","with CEWO, no WPR","no CEWO, no WPR"),
+         lwd=1,col=cols,lty=c("solid","longdash","longdash","solid"),ncol=2)
+}
 dev.off()

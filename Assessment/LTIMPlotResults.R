@@ -33,7 +33,7 @@ VelocityQuantiles<-function(file,Split,LevelLocations,WPNames)
     
     Col<-intersect(Col1,Col2)
     Y<-xts(Results[,Col],Date)
-    Y<-window(Y,start=as.POSIXct("2014-07-01 00:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))
+    Y<-window(Y,start=as.POSIXct("2015-07-01 00:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))
     
     #weight velocities by distance between chainages to account for  uneven representation.
     WeightsDummy<-as.numeric(c(Chainage[Col[1]],Chainage[Col],Chainage[Col[length(Col)]]))
@@ -65,7 +65,7 @@ VelocityQuantiles<-function(file,Split,LevelLocations,WPNames)
   Col4<-intersect(which(Variable=="WL"),which(Chainage ==LevelLocations[4]))
   Col<-c(Col1,Col2,Col3,Col4)
   Y<-xts(Results[,Col],Date)
-  Y<-window(Y,start=as.POSIXct(strptime("2014-07-01 00:00:00", "%Y-%m-%d %H:%M:%S")))
+  Y<-window(Y,start=as.POSIXct(strptime("2015-07-01 00:00:00", "%Y-%m-%d %H:%M:%S")))
   
   WL<-fortify(Y,melt=TRUE)
   WL$WeirPool<-WPNames[1]
@@ -122,8 +122,8 @@ getSeason <- function(DATES) {
 
 DifferencePlot<-function(X1,X2,Name,xlab,binwidth)
 {
-  X1<-subset(X1,Date>as.POSIXct("2014-09-09 09:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))  #FIXED DATE
-  X2<-subset(X2,Date>as.POSIXct("2014-09-09 09:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))  #FIXED DATE
+  X1<-subset(X1,Date>as.POSIXct("2015-07-01 09:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))  #FIXED DATE
+  X2<-subset(X2,Date>as.POSIXct("2015-07-01 09:00:00", "%Y-%m-%d %H:%M:%S",tz="UTC"))  #FIXED DATE
   Xs<-merge(X1,X2,by=c("Date","WeirPool"))
   
   Xs$Value=Xs$Value.x-Xs$Value.y
@@ -149,8 +149,8 @@ DifferencePlot<-function(X1,X2,Name,xlab,binwidth)
 
 #########################################################################################################
 
-folder<-"E:\\LTIM\\ModelOutputs"
-Runs<-c("-TSOut-Historic.txt","-TSOut-WithoutAllEwater.txt","-TSOut-withoutCEW.txt")
+folder<-"D:\\LTIM\\ModelOutputs"
+Runs<-c("-Historic.txt","-NoeWater-NoRaising.txt","-NoCEWO-NoRaising.txt")
 RunNames<-c("With all water","No eWater","No CEW")
 
 Model<-"Lock13"
@@ -208,12 +208,12 @@ ggsave(paste0("Assessment/Output/Velocity.png"),pv,width=16,height=22,units="cm"
 
 
 ##subsets for summary section
-A<-rbind(subset(Q,WeirPool=="Weir Pool 1"), subset(Q, WeirPool=="Weir Pool 4"))
+A<-rbind(subset(Q,WeirPool=="Weir Pool 1"), subset(Q, WeirPool=="Weir Pool 5"))
 pv<-ggplot(A,aes(x=Date))+geom_ribbon(aes(ymin=Q10,ymax=Q90,fill=Scenario),alpha=0.2)+geom_line(aes(y=Q50,colour=Scenario))+
   facet_grid(WeirPool ~ .,scales="free") + ylab("Velocity (m/s)")+xlab("Date")+theme_bw()+theme(legend.position="top")+
   scale_fill_manual(values=cols)+scale_colour_manual(values=cols)+scale_y_continuous(breaks=c(0,0.1,0.18,0.3,0.5))
 
-A<-rbind(subset(WL,Location=="Upper"&WeirPool=="Weir Pool 1"), subset(WL,Location=="Upper"& WeirPool=="Weir Pool 4"))
+A<-rbind(subset(WL,Location=="Upper"&WeirPool=="Weir Pool 1"), subset(WL,Location=="Upper"& WeirPool=="Weir Pool 5"))
 
 pWL2<-ggplot(A)+geom_line(aes(x=Index,y=Value,colour=Scenario))+
   facet_grid(WeirPool ~ .,scales="free") + ylab("Level (m AHD)")+xlab("Date")+theme_bw()+

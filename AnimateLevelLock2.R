@@ -16,11 +16,11 @@ highChainage<-157250
 startDate<-"2015-07-01"
 endDate<-"2016-06-30"
 # 
-# PlotVariable<-"V"
-# Label<-"Lock 2 Velocity (m/s)"
+PlotVariable<-"V"
+Label<-"Lock 2 Velocity (m/s)"
 
- PlotVariable<-"WL"
-  Label<-"Lock 2 Level (m AHD)"
+ # PlotVariable<-"WL"
+ #  Label<-"Lock 2 Level (m AHD)"
 
 cols<-c("#008CE5","#000000","#008CE5","#000000")
 
@@ -99,7 +99,7 @@ for(i in 1:nrow(Y))
     }
   
   #  lines(X$x,X$y,col="grey")
-    legend("topright",legend=c("with CEWO, with WPR","no CEWO, with WPR","with CEWO, no WPR","no CEWO, no WPR"),
+    legend("topright",legend=c("with CEW, with WPR","no CEW, with WPR","with CEW, no WPR","no CEW, no WPR"),
            lwd=1,col=cols,lty=c("solid","longdash","longdash","solid"))
     
     plot(Q,ylab="Lock 2 Flow (ML/d)",xlab="Date",col=cols[1],ylim=c(0,max(Q)))
@@ -140,13 +140,13 @@ i<-which(index(Y)=="2015-10-31")
 # }
 # 
 # #  lines(X$x,X$y,col="grey")
-# legend("topright",legend=c("with CEWO, with WPR","no CEWO, with WPR","with CEWO, no WPR","no CEWO, no WPR"),
+# legend("topright",legend=c("with CEW, with WPR","no CEW, with WPR","with CEW, no WPR","no CEW, no WPR"),
 #        lwd=1,col=cols,lty=c("solid","longdash","longdash","solid"))
 # 
 # plot(Q,ylab="Lock 5 Flow (ML/d)",xlab="Date",col=cols[1],ylim=c(0,max(Q)))
 # lines(Q_noeW,col=cols[4])
 # abline(v=.index(Q[i]),col="grey",lty="dashed")
-# legend("topright",legend=c("with CEWO","no CEWO"),lwd=1,col=cols[c(1,4)])
+# legend("topright",legend=c("with CEW","no CEW"),lwd=1,col=cols[c(1,4)])
 # dev.off()
 # 
 # 
@@ -180,11 +180,11 @@ if(PlotVariable=="WL")
 #  lines(X$x,X$y,col="grey")
 if(PlotVariable=="WL")
 {
-legend(x=34.5,y=6.95,xpd=TRUE,xjust=0.5,yjust=0,legend=c("with CEWO, with WPR","no CEWO, with WPR","with CEWO, no WPR","no CEWO, no WPR"),
+legend(x=34.5,y=6.95,xpd=TRUE,xjust=0.5,yjust=0,legend=c("with CEW, with WPR","no CEW, with WPR","with CEW, no WPR","no CEW, no WPR"),
        lwd=1,col=cols,lty=c("solid","longdash","longdash","solid"),ncol=2)
 }else
 {
-  legend(x=34.5,y=0.4,xpd=TRUE,xjust=0.5,yjust=0,legend=c("with CEWO, with WPR","no CEWO, with WPR","with CEWO, no WPR","no CEWO, no WPR"),
+  legend(x=34.5,y=0.45,xpd=TRUE,xjust=0.5,yjust=0,legend=c("with CEW, with WPR","no CEW, with WPR","with CEW, no WPR","no CEW, no WPR"),
          lwd=1,col=cols,lty=c("solid","longdash","longdash","solid"),ncol=2)
 }
 dev.off()
